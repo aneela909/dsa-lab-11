@@ -1,0 +1,101 @@
+//aneela 59512
+#include <iostream>
+#include <string>
+using namespace std;
+struct Applicant {
+    int applicant_id;
+    int height;
+    int weight;
+    string eyesight;
+    string status;
+    Applicant* next; 
+    Applicant(int id, int h, int w, const string& e, const string& s)
+        : applicant_id(id), height(h), weight(w), eyesight(e), status(s), next(nullptr) {}
+};
+class Queue {
+private:
+    Applicant* front;
+    Applicant* rear;
+
+public:
+    Queue() : front(nullptr), rear(nullptr) {}
+    bool isEmpty() {
+        return front == nullptr;
+    }
+    void enqueue(Applicant* applicant) {
+        if (rear == nullptr) {
+            front = rear = applicant;
+        } else {
+            rear->next = applicant;
+            rear = applicant;
+        }
+    }
+    Applicant* dequeue() {
+        if (isEmpty()) {
+            return nullptr;
+        }
+        Applicant* removed_applicant = front;
+        front = front->next;
+        if (front == nullptr) {
+            rear = nullptr; 
+        }
+        return removed_applicant;
+    }
+    Applicant* removeAtPosition(int position) {
+        if (isEmpty() || position < 1) {
+            return nullptr;
+        }
+
+        Applicant* current = front;
+        if (position == 1) {
+            return dequeue(); 
+        }
+
+        for (int i = 0; current != nullptr && i < position - 2; i++) {
+            current = current->next;
+        }
+        if (current == nullptr || current->next == nullptr) {
+            return nullptr;
+        }
+        Applicant* removed_applicant = current->next;
+        current->next = removed_applicant->next;
+        if (removed_applicant == rear) {
+            rear = current; 
+        }
+        return removed_applicant;
+    }
+    void display() {
+        Applicant* current = front;
+        while (current != nullptr) {
+            cout << "Applicant ID: " << current->applicant_id
+                 << ", Height: " << current->height
+                 << ", Weight: " << current->weight
+                 << ", Eyesight: " << current->eyesight
+                 << ", Status: " << current->status << endl;
+            current = current->next;
+        }
+    }
+};
+int main() {
+    Queue queue;
+    for (int i = 1; i <= 7; i++) {
+        Applicant* applicant = new Applicant(i, 170 + i, 60 + i, "20/20", "waiting");
+        queue.enqueue(applicant);
+    }
+    cout << "Initial Queue:" << endl;
+    queue.display();
+    cout << "\nApplicant at position 2 is leaving due to urgency." << endl;
+    Applicant* removed_applicant = queue.removeAtPosition(2);
+    if (removed_applicant) {
+        cout << "Removed Applicant ID: " << removed_applicant->applicant_id << endl;
+        delete removed_applicant; 
+    }
+    cout << "\nUpdated Queue:" << endl;
+    queue.display();
+    while (!queue.isEmpty()) {
+        Applicant* applicant = queue.dequeue();
+        delete applicant; // Free the memory
+    }
+
+    return 0;
+}
