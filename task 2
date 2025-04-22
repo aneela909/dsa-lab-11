@@ -1,0 +1,82 @@
+//aneela
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+
+class TruckManager {
+private:
+    std::vector<int> road;
+    std::vector<int> garage;
+    const int maxGarageCapacity = 5; 
+
+public:
+    void On_road(int vehicle_id) {
+        road.push_back(vehicle_id);
+    }
+
+    void Show_trucks(const std::string& location) {
+        if (location == "road") {
+            std::cout << "Road Vehicle: ";
+            for (int id : road) {
+                std::cout << id << "_";
+            }
+            std::cout << (road.empty() ? "Empty" : "") << std::endl;
+        } 
+        else if (location == "garage") {
+            std::cout << "Garage Vehicle: ";
+            for (int id : garage) {
+                std::cout << id << "_";
+            }
+            std::cout << (garage.empty() ? "Empty" : "") << std::endl;
+        }
+    }
+
+    void Enter_garage(int vehicle_id) {
+        if (garage.size() < maxGarageCapacity) {
+            garage.push_back(vehicle_id);
+        } else {
+            std::cout << "Error: " << vehicle_id
+                      << " No. Vehicle cannot enter garage." << std::endl;
+        }
+    }
+
+    void Exit_garage(int vehicle_id) {
+        auto it = std::find(garage.begin(), garage.end(), vehicle_id);
+        if (it != garage.end()) {
+            garage.erase(it);
+            std::cout << vehicle_id << " No. vehicle leaving garage." << std::endl;
+        } else {
+            std::cout << "Error: " << vehicle_id
+                      << " No. Vehicle cannot exit garage." << std::endl;
+        }
+    }
+};
+
+int main() {
+    TruckManager manager;
+
+    manager.On_road(2);
+    manager.On_road(5);
+    manager.On_road(10);
+    manager.On_road(9);
+    manager.On_road(22);
+    
+    manager.Show_trucks("road");
+    manager.Show_trucks("garage");
+    
+    manager.Enter_garage(2);
+    manager.Show_trucks("road");
+    manager.Show_trucks("garage");
+    
+    manager.Enter_garage(10);
+    
+    manager.Enter_garage(5);
+    manager.Exit_garage(2);
+    manager.Exit_garage(5);
+    manager.Enter_garage(5);
+    
+    manager.Show_trucks("garage");
+    
+    return 0;
+}
